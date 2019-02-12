@@ -5,13 +5,13 @@
 demo_go/.idea/*
 
 # java
-demo/.gradle/*
-demo/build/*
-demo/demo.iml
-demo/demo.ipr
-demo/demo.iws
-demo/out
-demo/bin
+demo_java/.gradle/*
+demo_java/build/*
+demo_java/demo.iml
+demo_java/demo.ipr
+demo_java/demo.iws
+demo_java/out
+demo_java/bin
 */.classpath
 */.project
 */.settings/
