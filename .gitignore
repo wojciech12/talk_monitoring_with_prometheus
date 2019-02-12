@@ -1,3 +1,17 @@
 */prometheus/data/
-demo_go/.idea/*
 */grafana/data/
+
+# go
+demo_go/.idea/*
+
+# java
+demo/.gradle/*
+demo/build/*
+demo/demo.iml
+demo/demo.ipr
+demo/demo.iws
+demo/out
+demo/bin
+*/.classpath
+*/.project
+*/.settings/
