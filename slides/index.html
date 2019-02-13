@@ -42,15 +42,15 @@
 						<!-- <br />How to design the metrics? -->
 					<img src="img/logo_prometheus.png" width="40%" />
 
-					<h6><small>W<span style="text-transform: lowercase;">ojciech</span> B<span style="text-transform: lowercase;">arczyński</span> - SMACC.<span style="text-transform: lowercase;">io</span> | <a href="https://www.linkedin.com/in/wojciechbarczynski/">LI</a> | <a href="https://twitter.com/wbarczynski">T<span style="text-transform: lowercase;">witter</span></a> | 13 F<span style="text-transform: lowercase;">ebruary</span> 2019</small></h6>
+					<h6><small>W<span style="text-transform: lowercase;">ojciech</span> B<span style="text-transform: lowercase;">arczyński</span> - H<span style="text-transform: lowercase;">ypatos.ai</span> (SMACC.<span style="text-transform: lowercase;">io</span>) | <a href="https://www.linkedin.com/in/wojciechbarczynski/">LI</a> | <a href="https://twitter.com/wbarczynski">T<span style="text-transform: lowercase;">witter</span></a> | 13 F<span style="text-transform: lowercase;">ebruary</span> 2019</small></h6>
 				</section>
 
 				<section>
 					<h3>About me</h3>
 					<p><ul>
 						<li>Lead Software Developer - Hypatos.AI (FinTech/AI)</li>
-						<li>Before:<br />System Engineer && Developer Lyke</li>
-						<li>Looking:<br />Tools for efficent and :) teams</li>
+						<li>Before:<br />System Engineer && Developer Lyke (RocketInternet)</li>
+						<li>Looking:<br />Tools for efficent teams</li>
 						<!-- li>System Engineer background</li -->
 						<!-- li>Hobby:<br />teaching software engineering</li -->
 					</ul></p>
@@ -59,14 +59,12 @@
 				<section>
 					<h3>Point of view</h3>
 
-					<p>
-						<ul>
+					<p><ul>
 							<li>Software Developer</li>
 							<li>startups && fast-moving environment</li>
 							<li>Infra and platform should just work</li>
 							<li>Infra and platform ~ invisible</li>
-						</ul>
-					</p>
+						</ul></p>
 				</section>
 
 				<section>
@@ -174,14 +172,7 @@
 
 				<section>
 					<h4>How to find the right metric?</h4>
-					<!-- h5>
-						<ul>
-							<li>USE</li>
-							<li>RED</li>
-						</ul>
-					</h5 -->
 				</section>
-
 
 				<section>
 					<h4>How to find the right metric?</h4>
@@ -364,14 +355,13 @@ Not recommended for:
 ## Prometheus
 
 - Plain text
-- Metrics collected over HTTP <a href="http://127.0.0.1:8080/prometheus">*metrics/*[1]</a>
-- Pull model [2]
+- Metrics collected over HTTP <a href="http://127.0.0.1:8080/prometheus">*metrics/</a>
+- Pull model [1]
 - Wide support for languages
 - PromQL
 - Integration with Kubernetes, Traefik, ...
 
-<p><small>[1] most commmon, <i>prometheus</i> in Spring 1.5</small><br />
-<small>[2] See *scrape time*, push-mode possible</small></p>
+<small>[1] See *scrape time*, push-mode possible</small></p>
 					</script>
 				</section>
 
@@ -472,7 +462,7 @@ Alarming:
 								<section>
 									<h3>Cloud-native projects integration</h3>
 									<img src="img/traefik_architecture.svg" width="80%"/>
-									<small>  - --web.metrics.prometheus</small>
+									<small><a href="https://traefik.io/">traefik</a>: <code>--web.metrics.prometheus</code></small>
 								</section>
 
 				<!--
@@ -618,34 +608,20 @@ Best practises on <a target="_blank" href="https://prometheus.io/docs/practices/
 				</section -->
 
 				<section>
-					<h3>Prometheus + Java</h3>
+					<h3>Prometheus + Golang</h3>
 						<img src="img/logo_prometheus.png" width="30%" />
 						<img src="img/logo_grafana.png" width="20%" />
-						<img src="img/logo_java.png" width="20%" />
+						<img src="img/logo_go.png" width="30%" />
 					</h3>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-### Java client
+### Goalng client
 
-- <a target="_blank" href="https://github.com/prometheus/client_java">client_python</a>
-- <a target="_blank" href="https://github.com/prometheus/client_java#counter">Counter</a>
-- <a target="_blank" href="https://github.com/prometheus/client_java#gauge">Gauge</a>
-- <a target="_blank" href="https://github.com/prometheus/client_java#summary">Summary</a>
-- <a target="_blank" href="https://github.com/prometheus/client_java#histogram">Histogram</a>
+- <a target="_blank" href="https://github.com/prometheus/client_golang">github.com/prometheus/client_golang</a>
 					</script>
 				</section>
-
-								<section data-markdown>
-									<script type="text/template">
-### Java
-
-- Sprint 1.5 - demo
-- Sprint 2.x - wrapper with <code>io.micrometer.core</code>
-- JMX exporter -<br />https://github.com/prometheus/jmx_exporter
-									</script>
-								</section>
 
 				<section data-markdown>
 					<script type="text/template">
@@ -862,36 +838,8 @@ order_mgmt_audit_duration_seconds_sum{job=~".*"}</code></pre>
 					</ul>
 				</section>
 
-				<section>
-					<h3>Summary</h3>
-					<img src="img/observability.svg" width="80%">
-				</section>
-
 			<section data-background="img/smacc_header_IT_source.jpg" data-background-repeat="" data-background-size="100%" data-background-position="bottom" style="position: relative; top:0">
 				<h1>Thank you</h1>
-			</section>
-
-			<section data-background="img/smacc_header_IT_source.jpg" data-background-repeat="" data-background-size="100%" data-background-position="bottom"
-			style="position: relative; top:0">
-				<h4>Questions?</h4>
-				<p>ps. We are hiring.</p><!-- Developers, Frontend, System Engineers -->
-			</section>
-
-			<section>
-				<img src="img/logo_smacc.png" width="40%" />
-				<img src="img/logo_go.png" width="25%" />
-				<img src="img/logo_python.png" width="25%" />
-
-				<img src="img/logo_pytorch.png" width="20%" />
-				<img src="img/logo_tensorflow.png" width="25%" />
-				<img src="img/logo_kubernetes.svg" width="10%" />
-				<img src="img/logo_openapi.png" width="10%" />
-
-				<img src="img/logo_aws.png" width="20%" />
-				<img src="img/logo_azure.png" width="15%" />
-				<img src="img/logo_lambda.png" width="15%" />
-
-				<img src="img/smacc_lets_do_this.png" width="25%" />
 			</section>
 
 			<!--
@@ -968,41 +916,6 @@ Which one is better?
 			</div>
 		</div>
 		</div>
-
-		<section>
-			<h5>Promethus - labels in alert rules</h5>
-
-The labels are propageted to alert rules:
-
-<pre><code>ALERT ProductionAppServiceInstanceDown
-IF up { environment = "production", app =~ ".+"} == 0
-FOR 4m
-ANNOTATIONS {
-		summary = "Instance of {{$labels.app}} is down",
-		description = " Instance  {{$labels.instance}} of app {{$labels.app}} has been down for more than 4 minutes"
-}</code></pre>
-<small>see ../src/prometheus/etc/alert.rules</small>
-		</section>
-
-		<section>
-			<h5>AlertManger - labels in AlertManger</h5>
-<small>Call somebody if the label is <code>severity=page</code>:</small>
-<pre><code>---
-group_by: [cluster]
-# If an alert isn't caught by a route, send it to the pager.
-receiver: team-pager
-routes:
-- match:
-	severity: page
-receiver: team-pager
-
-receivers:
-- name: team-pager
-opsgenie_configs:
-- api_key: $API_KEY
-teams: example_team</code></pre>
-<small>see ../src/alertmanager/*.conf</small>
-</section>
 
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.js"></script>
