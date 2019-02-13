@@ -20,7 +20,7 @@ services:
       - alertmanager:alertmanager
       - order-manager:order-manager
   alertmanager:
-    image: prom/alertmanager
+    image: prom/alertmanager:v0.15.1
     ports:
       - 9093:9093
     command:
@@ -29,7 +29,7 @@ services:
       - ./alertmanager/:/etc/alertmanager/
     restart: always
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:5.2.2
     ports:
       - 3000:3000
     environment:

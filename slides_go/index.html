@@ -644,9 +644,9 @@ Best practises on <a target="_blank" href="https://prometheus.io/docs/practices/
 					#### Demo:
 
 - <a target="_blank" href="http://127.0.0.1:8080/hello">http://127.0.0.1:8080/hello</a> - service
-- <a target="_blank" href="http://127.0.0.1:8080/prometheus/">http://127.0.0.1:8080/prometheus/</a>
+- <a target="_blank" href="http://127.0.0.1:8080/metrics">http://127.0.0.1:8080/metrics</a>
 - <a target="_blank" href="http://127.0.0.1:9090">http://127.0.0.1:9090</a> - prometheus
-- <a target="_blank" href="http://127.0.0.1:3000">http://127.0.0.1:3000</a> - grafana
+- <a target="_blank" href="http://127.0.0.1:3000">http://127.0.0.1:3000</a> - grafana (admin:secret)
 - <a target="_blank" href="http://127.0.0.1:9093">http://127.0.0.1:9093</a> - alertmanager
 					</script>
 				</section>
@@ -660,11 +660,10 @@ Best practises on <a target="_blank" href="https://prometheus.io/docs/practices/
 
 ☁  demo ⚡ docker ps
 CONTAINER ID        IMAGE                      PORTS                    NAMES
-5f824d1bc789        grafana/grafana:5.2.2      0.0.0.0:3000->3000/tcp   java-prom_grafana_1
-d681a414a8b6        prom/prometheus:v2.1.0     0.0.0.0:9090->9090/tcp   java-prom_prometheus_1
-ea0d9233e159        prom/alertmanager:v0.15.1  0.0.0.0:9093->9093/tcp   java-prom_alertmanager_1
-732c59fb3753        java-prom_order-manager    0.0.0.0:8080->8080/tcp   java-prom_order-manager_1
-</code></pre>
+5f824d1bc789        grafana/grafana:5.2.2      0.0.0.0:3000->3000/tcp   talk-go-prom-red_grafana_1
+d681a414a8b6        prom/prometheus:v2.1.0     0.0.0.0:9090->9090/tcp   talk-go-prom-red_prometheus_1
+ea0d9233e159        prom/alertmanager:v0.15.1  0.0.0.0:9093->9093/tcp   talk-go-prom-red_alertmanager_1
+732c59fb3753        java-prom_order-manager    0.0.0.0:8080->8080/tcp   talk-go-red_order-manager_1</code></pre>
 					</script>
 				</section>
 
@@ -706,7 +705,7 @@ ea0d9233e159        prom/alertmanager:v0.15.1  0.0.0.0:9093->9093/tcp   java-pro
 					<script type="text/template">
 <h3>Kill the service</h3>
 <pre><code class="bash" data-trim="" width="100%">
-☁  demo ⚡ docker stop java-prom_order-manager_1
+☁  demo ⚡ docker stop talk-golang-prom-red_alertmanager_1
 </code></pre>
 					</script>
 				</section>
@@ -738,7 +737,7 @@ ea0d9233e159        prom/alertmanager:v0.15.1  0.0.0.0:9093->9093/tcp   java-pro
 
 				<section>
 					<h5>Github</h5>
-					<img src="img/demo/github.png"  width="70%"  />
+					<img src="img/demo/github.png"  width="80%"  />
 				</section>
 
 				<!-- section data-markdown>
