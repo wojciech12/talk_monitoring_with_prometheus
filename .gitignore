@@ -15,3 +15,11 @@ demo_java/bin
 */.classpath
 */.project
 */.settings/
+
+#py
+*/.venv
+*/__pycache__/
+*/prometheus/data/
+demo_py/grafana/data/
+demo_py/multiproc-tmp/
+demo_py/alertmanager/data/
