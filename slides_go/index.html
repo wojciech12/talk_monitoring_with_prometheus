@@ -4,32 +4,27 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>RED for Go apps with Prometheus/Alertmanager/Grafana</title>
+		<title>How to monitor your Golang App with Prometheus/Alertmanager/Grafana</title>
 
 		<!-- bootstrap -->
-		<link rel="stylesheet" href="ext/bootstrap-4.0.0-beta/bootstrap.min.css">
+		<link rel="stylesheet" href="ext/bootstrap-5.3.0-alpha3/bootstrap.min.css">
 
-
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/white.css">
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
 
 		<!-- Theme used for syntax highlighting of code -->
-		<!-- link rel="stylesheet" href="lib/css/zenburn.css" -->
-
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
+		<!-- link rel="stylesheet" href="plugin/highlight/monokai.css" -->
 
 		<style>
 			.reveal section img {
 				background-color:white;
 				border:0;
 				box-shadow: 0 0 0 0;
+			}
+
+			h3,h4,h5 {
+				text-transform: none !important;
 			}
 		</style>
 	</head>
@@ -38,60 +33,59 @@
 		<div class="reveal">
 			<div class="slides">
 				<section>
-					<h3 style="text-transform: none !important;">How to monitor your micro-service<br />with Prometheus?</h1>
+					<!-- Monitoring for Golang App with Prometheus (and Grafana) -->
+					<h3 style="text-transform: none !important;">How to monitor your Golang App<br />with Prometheus (and Grafana)?</h1>
 						<!-- <br />How to design the metrics? -->
 					<img src="img/logo_prometheus.png" width="40%" />
 
-					<h6><small>W<span style="text-transform: lowercase;">ojciech</span> B<span style="text-transform: lowercase;">arczyński</span> - H<span style="text-transform: lowercase;">ypatos.ai</span> (SMACC.<span style="text-transform: lowercase;">io</span>) | <a href="https://www.linkedin.com/in/wojciechbarczynski/">LI</a> | <a href="https://twitter.com/wbarczynski">T<span style="text-transform: lowercase;">witter</span></a> | 13 F<span style="text-transform: lowercase;">ebruary</span> 2019</small></h6>
+					<h6 style="text-transform: none !important;"><small>Wojciech Barczyński - <a href="https://spacelift.io/" style="color:#7c47fc">Spacelift.io</a><br />15 June 2023</small></h6>
 				</section>
 
 				<section>
 					<h3>About me</h3>
 					<p><ul>
-						<li>Lead Software Developer - Hypatos.AI (FinTech/AI)</li>
-						<li>Before:<br />System Engineer && Developer Lyke (RocketInternet)</li>
-						<li>Looking:<br />Tools for efficent teams</li>
-						<!-- li>System Engineer background</li -->
-						<!-- li>Hobby:<br />teaching software engineering</li -->
+						<li>Lead Engineering at <a href="https://spacelift.io/" style="color:#7c47fc">Spacelift.io</a></li>
+						<li>Background:<br />Developer and System Engineer</li>
+						<li>Before:<br />
+						Codility.com, Hypatos.ai, Lykehq (RocketInternet)</li>
 					</ul></p>
 				</section>
 
 				<section>
 					<h3>Point of view</h3>
-
 					<p><ul>
-							<li>Software Developer</li>
-							<li>startups && fast-moving environment</li>
-							<li>Infra and platform should just work</li>
-							<li>Infra and platform ~ invisible</li>
-						</ul></p>
+						<li>Software Engineer,</li>
+						<li>startups && fast-moving environment,</li>
+						<li>Infra and platform should just work,</li>
+						<li>Infra and platform ~ invisible.</li>
+					</ul></p>
 				</section>
 
 				<section>
-					<h3>My Goal</h3>
+					<h3>Recommendation</h3>
 
 					<p><ul>
-						<li>Start with monitoring</li>
-						<li>Metrics? Start with Up/Down -> USE || RED</li>
-						<li>Drop-in solution - Prometheus</li>
-						<li>How to start? With this demo app</li>
+						<li>Start with monitoring;</li>
+						<li>Metrics? Start with <a href="https://www.statuscake.com" style="color:black">Up/Down</a>, than RED and USE;</li>
+						<li>Drop-in solution Prometheus;</li>
+						<li>How to start? With this demo app.</li>
 					</ul></p>
 				</section>
 
 				<section>
 					<h3>Why?</h3>
-					<h4>Monolit ;) </h4>
+					<h4>M<span style="text-transform: lowercase;">onolit</span> ;) </h4>
 					<img src="img/rubber_duck_monolit.jpg" width="70%">
 				</section>
 
 				<section>
 					<h3>Why?</h3>
-					<h4>Microservices ;) </h4>
+					<h4>M<span style="text-transform: lowercase;">icroservices</span> ;) </h4>
 					<img src="img/rubber_duck_microservices.jpg" width="70%">
 				</section>
 
 				<section>
-					<h4>Observability</h4>
+					<h4>O<span style="text-transform: lowercase;">bservability</span></h4>
 					<ul>
 					<li>Monitoring</li>
 					<li>Logging</li>
@@ -100,29 +94,29 @@
 				</section>
 
 				<section>
-					<h4>Observability</h4>
+					<h4>O<span style="text-transform: lowercase;">bservability</span></h4>
 <img src="img/observability_capex_vs_opex_from_golang_prod_blog.png" width="80%" />
 
-<small><a href="https://peter.bourgon.org/go-for-industrial-programming/">Go for Industrial Programming by Peter Bourgon</a></small>
+<small><a href="https://peter.bourgon.org/go-for-industrial-programming/">Go for Industrial Programming by Peter Bourgon</a>.</small>
 </section>
 
 				<section>
-					<h3>Not a silver-bullet</h3>
+					<h3>N<span style="text-transform: lowercase;">ot a silver-bullet</span></h3>
 					<p>but:</p>
 					<ul>
 						<li>Easy to setup</li>
 						<li>Immediately value</li>
 					</ul>
-					<p>Suprisengly: the last one implemented</p>
+					<p>Surprisingly: the last one implemented</p>
 				</section>
 
 				<section>
 					<h3>Centralized Logging</h3>
 					<ul>
 						<li>Like a debugging vs testing</li>
-						<li>Usually much too late</li>
 						<li>Post-mortem</li>
 						<li>Hard to find the needle</li>
+						<li>Hight CTO</li>
 					</ul>
 				</section>
 
@@ -137,7 +131,7 @@
 				</section>
 
 				<section>
-					<h4>Metric</h4>
+					<h4 style="text-transform: none !important;">Metric</h4>
 
 					<table class="table">
 						 <thead>
@@ -171,11 +165,11 @@
 				</section>
 
 				<section>
-					<h4>How to find the right metric?</h4>
+					<h3>How to find the right metric?</h3>
 				</section>
 
 				<section>
-					<h4>How to find the right metric?</h4>
+					<h4>H<span style="text-transform: lowercase;">ow to find the right metric?</span></h4>
 					<h5>
 						<ul>
 							<li>USE</li>
@@ -186,24 +180,24 @@
 
 				<section data-markdown>
 					<script type="text/template">
-					## USE
+## USE
 
 <table class="table">
 		 <tbody>
 			 <tr>
-				 <td>**U**tilization</td>
+				 <td><b>U</b>tilization</td>
 				 <td>the average time that the resource was busy servicing work</td>
 			 </tr>
 			 <tr>
-				 <td>**S**aturation</td>
+				 <td><b>S</b>aturation</td>
 				 <td>extra work which it can't service, often queued</td>
 			 </tr>
 			 <tr>
-				 <td>**E**rrors</td>
+				 <td><b>E</b>rrors</td>
 				 <td>the count of error events</td>
 			 </tr>
 </tbody>
-					 </table>
+</table>
 
 <small>Documented and Promoted by <a href="http://www.brendangregg.com/usemethod.html">Berdan Gregg</a></small>
 <!-- Famous Shouting in the Datacenter - https://www.youtube.com/watch?v=tDacjrSCeq4 -->
@@ -212,7 +206,7 @@
 
 		<section data-markdown>
 			<script type="text/template">
-				## USE
+## USE
 
 - **U**tilization: as a percent over a time interval: "one disk is running at 90% utilization".
 - **S**aturation:
@@ -221,7 +215,7 @@
 				</section>
 		<section data-markdown>
 			<script type="text/template">
-				## USE
+## USE
 
 - **Utilization**:
 - **Saturation**: as a queue length. eg, "the CPUs have an average run queue length of four".
@@ -231,17 +225,17 @@
 
 		<section data-markdown>
 			<script type="text/template">
-				## USE
+## USE
 
-- **utilization**:
-- **saturation**:
-- **errors**: scalar counts. eg, "this network interface drops packages".
+- **Utilization**:
+- **Saturation**:
+- **Errors**: scalar counts. eg, "this network interface drops packages".
 					</script>
 				</section>
 
 		<section data-markdown>
 			<script type="text/template">
-				## USE
+## USE
 
 - **traditionaly** more instance oriented
 - still useful in the microservices world
@@ -250,65 +244,66 @@
 
 				<section data-markdown><!-- workload -->
 					<script type="text/template">
-						## RED
+## RED
 
-						<table class="table">
+<table class="table">
 							 <tbody>
 								 <tr>
-									 <td>**R**ate</td>
+									 <td><b>R</b>ate</td>
 									 <td>How busy is your service?</td>
 								 </tr>
 								 <tr>
-									 <td>**E**rror</td>
+									 <td><b>E</b>rror</td>
 									 <td>Errors</td>
 								 </tr>
 								 <tr>
-									 <td>**D**uration </td>
+									 <td><b>D</b>uration </td>
 									 <td>What is the latency of my service?</td>
 								 </tr>
 							 </tbody>
-						 </table>
+</table>
 <center><small> <a href="https://twitter.com/i/web/status/852341680946544640">Tom Wilkie's guideline for instrumenting applications</a>.</small></center>
 					</script>
 				</section>
 
 				<section data-markdown><!-- workload -->
 					<script type="text/template">
-						## RED
+## RED
 
-						- **Rate** - how many request per seconds handled
-						- **Error**
-						- **Duration** (distribution)
+- **Rate** - how many request per seconds handled
+- **Error**
+- **Duration** (distribution)
 					</script>
 				</section>
 
 				<section data-markdown><!-- workload -->
 					<script type="text/template">
-						## RED
+## RED
 
-						- **Rate**
-						- **Error** - how many request per seconds handled we failed
-						- **Duration**
+- **Rate**
+- **Error** - how many request per seconds handled we failed
+- **Duration**
 					</script>
 				</section>
 
 				<section data-markdown><!-- workload -->
 					<script type="text/template">
-						## RED
+## RED
 
-						- **Rate**
-						- **Error**
-						- **Duration** - how long the requests took
+- **Rate**
+- **Error**
+- **Duration** - how long the requests took
 					</script>
 				</section>
-
 
 				<section data-markdown>
 					<script type="text/template">
-						## RED
+## RED
 
-						- Follow Four Golden Signals by Google SREs [1]
-						- Focus on what matters for end-users
+- Follow Four Golden Signals by Google SREs [1]
+- Focus on what matters for end-users, [their experience](https://requestmetrics.com/web-performance/measure-web-performance)
+- Business metrics
+
 
 <center><small>[1] Latency, Traffic, Errors, Saturation (<a href="https://landing.google.com/sre/book/chapters/monitoring-distributed-systems.html">src</a>)</small></center>
 					</script>
@@ -316,7 +311,7 @@
 
 				<section data-markdown><!-- workload -->
 					<script type="text/template">
-						## RED
+## RED
 
 Not recommended for:
 
@@ -325,15 +320,16 @@ Not recommended for:
  					</script>
  				</section>
 
+
 				<section>
-					<h3>Prometheus</h3>
+					<h3>P<span style="text-transform: lowercase;">rometheus</span></h3>
 						<img src="img/logo_prometheus.png" width="40%" />
 						<img src="img/logo_grafana.png" width="30%" />
 					</h3>
 				</section>
 
 				<section>
-					<h3>What prometheus is?</h3>
+					<h3>W<span style="text-transform: lowercase;">hat prometheus is?</h3>
 					<ul>
 						<li>Aggregation of time-series data</li>
 						<li>Not an event-based system</li>
@@ -342,7 +338,7 @@ Not recommended for:
 				</section>
 
 				<section>
-					<h3>Prometheus stack</h3>
+					<h3>P<span style="text-transform: lowercase;">rometheus stack</span></h3>
 					<ul>
 						<li>Prometheus - collect</li>
 						<li>Alertmanager - alerts</li>
@@ -352,13 +348,13 @@ Not recommended for:
 
 				<section data-markdown>
 					<script type="text/template">
-## Prometheus
+### P<span style="text-transform: lowercase;">rometheus</span>
 
-- Plain text
-- Metrics collected over HTTP <a href="http://127.0.0.1:8080/prometheus">*metrics/</a>
-- Pull model [1]
-- Wide support for languages
-- PromQL
+- Plain text,
+- Metrics collected over HTTP <a href="http://127.0.0.1:8080/prometheus">metrics/</a>,
+- Pull model [1],
+- Wide support for languages,
+- PromQL,
 - Integration with Kubernetes, Traefik, ...
 
 <small>[1] See *scrape time*, push-mode possible</small></p>
@@ -367,7 +363,7 @@ Not recommended for:
 
 				<section data-markdown>
 					<script type="text/template" width="100%">
-### Metrics in plain text
+### M<span style="text-transform: lowercase;">etrics in plain text</span>
 
 <pre><code data-trim="" width="100%"># HELP order_mgmt_audit_duration_seconds Multiprocess metric
 # TYPE order_mgmt_audit_duration_seconds summary
@@ -383,13 +379,12 @@ order_mgmt_duration_seconds_count{method="GET",path="/",status_code="404"} 1.0
 order_mgmt_duration_seconds_sum{method="GET",path="/",status_code="404"} 0.029236555099487305
 order_mgmt_duration_seconds_count{method="GET",path="/complex",status_code="503"} 1.0
 order_mgmt_duration_seconds_sum{method="GET",path="/complex",status_code="503"} 1.6936163902282715</code></pre>
-
 					</script>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-### Metrics in plain text
+### M<span style="text-transform: lowercase;">etrics in plain text</span>
 
 <pre><code data-trim="" width="100%"># HELP go_gc_duration_seconds A summary of the GC invocation durations.
 # TYPE go_gc_duration_seconds summary
@@ -405,7 +400,7 @@ go_gc_duration_seconds_count 89273</code></pre>
 
 				<section data-markdown>
 					<script type="text/template">
-## Exporters
+### E<span style="text-transform: lowercase;">xporters</span>
 
 - Mongodb
 - Mysql
@@ -414,35 +409,36 @@ go_gc_duration_seconds_count 89273</code></pre>
 - ...
 - also Blackbox exporter
 
-<p><small>Examples: <a href="https://github.com/skarab7/kubernetes-memcached">memcached</a>, [psql](https://github.com/justwatchcom/sql_exporter)</small></p>
+<p><small><a href="https://prometheus.io/docs/instrumenting/exporters/">Exporters and integrations</a></small></p>
 				</script>
 			</section>
 
 				<section data-markdown>
 					<script type="text/template">
-### Prometheus P<span style="text-transform: lowercase;">rom</span>QL
+### P<span style="text-transform: lowercase;">rometheus</span> P<span style="text-transform: lowercase;">rom</span>QL
 
-	# working with historams:
+<p>Working with histograms:</p>
 
-	histogram_quantile(0.9,
-	  rate(http_req_duration_seconds_bucket[10m]))
+  ```promql
+  histogram_quantile(0.9,
+    rate(http_req_duration_seconds_bucket[10m]))
+  ```
 
-	# rates:
+<p>Rates:</p>
 
-		rate(http_requests_total{job="api-server"}[5m])
-		irate(http_requests_total{job="api-server"}[5m])
+  ```promql
+  rate(http_requests_total{job="api-server"}[5m])
+    irate(http_requests_total{job="api-server"}[5m])
+  ```
 
-	# more complex:
-
-		redict_linear()
-		holt_winters()
+More complex - `redict_linear` and `holt_winters`.
 					</script>
 					<!-- https://prometheus.io/docs/prometheus/latest/querying/functions/#holt_winters() -->
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-### Prometheus P<span style="text-transform: lowercase;">rom</span>QL
+### P<span style="text-transform: lowercase;">rometheus</span> P<span style="text-transform: lowercase;">rom</span>QL
 
 Alarming:
 
@@ -459,17 +455,17 @@ Alarming:
 					<!-- https://prometheus.io/docs/prometheus/latest/querying/functions/#holt_winters() -->
 				</section>
 
-								<section>
-									<h3>Cloud-native projects integration</h3>
-									<img src="img/traefik_architecture.svg" width="80%"/>
-									<small><a href="https://traefik.io/">traefik</a>: <code>--web.metrics.prometheus</code></small>
-								</section>
+				<section>
+					<h3>C<span style="text-transform: lowercase;">loud-native projects integration</span></h3>
+					<img src="img/traefik_architecture.svg" width="80%"/>
+					<small><a href="https://traefik.io/">traefik</a>: <code>--web.metrics.prometheus</code></small>
+				</section>
 
 				<!--
 				-->
 				<section data-markdown>
 					<script type="text/template">
-### Metrics
+### M<span style="text-transform: lowercase;">etrics</span>
 
 - Counter - just up
 - Gauge - up/down
@@ -478,56 +474,53 @@ Alarming:
 					</script>
 				</section>
 
-				<section data-markdown>
-					<script type="text/template">
-					#### Histogram
-					<code>traefik_duration_seconds_bucket<br />{method="GET,code="200"}</code>
+				<section>
+<h4>H<span style="text-transform: lowercase;">istogram</span></h4>
 
-					<table class="table">
-						 <tbody>
-							<tr>
-								 <td>{le="0.1"}</td>
-								 <td>2229</td>
-							</tr>
+<code>traefik_duration_seconds_bucket<br />{method="GET,code="200"}</code>
 
-							<tr>
-								 <td>{le="0.3"}</td>
-								 <td>107</td>
-							</tr>
-							<tr>
-								 <td>{le="1.2"}</td>
-								 <td>100</td>
-							 </tr>
-
-							<tr>
-								 <td>{le="5"}</td>
-								 <td>4</td>
-							</tr>
-							<tr>
-								 <td>{le="+Inf"}</td>
-								 <td>2</td>
-							</tr>
-							<tr>
-								<td>_sum</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>_count</td>
-								<td>2342</td>
-							</tr>
-						 </tbody>
-					</table>
-
-					</script>
+<table class="table">
+<tbody>
+	<tr>
+		 <td>{le="0.1"}</td>
+		 <td>2229</td>
+	</tr>
+	<tr>
+		 <td>{le="0.3"}</td>
+		 <td>107</td>
+	</tr>
+	<tr>
+		 <td>{le="1.2"}</td>
+		 <td>100</td>
+	</tr>
+	<tr>
+		 <td>{le="5"}</td>
+		 <td>4</td>
+	</tr>
+	<tr>
+		 <td>{le="+Inf"}</td>
+		 <td>2</td>
+	</tr>
+	<tr>
+		<td>_sum</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>_count</td>
+		<td>2342</td>
+	</tr>
+</tbody>
+</table>
 				</section>
 
 				<!-- A Summary similar to histogram_quantile() -->
-				<section data-markdown>
-					<script type="text/template">
-					#### Summary
-					<code>http_request_duration_seconds</code>
+				<section>
 
-					<table class="table">
+<h4>S<span style="text-transform: lowercase;">ummary</span></h4>
+
+<code>http_request_duration_seconds</code>
+
+<table class="table">
 						 <tbody>
 							<tr>
 								 <td>{quantile="0.5"}</td>
@@ -546,8 +539,7 @@ Alarming:
 								 <td>3</td>
 							</tr>
 						 </tbody>
-					</table>
-					</script>
+</table>
 				</section>
 
 				<!--
@@ -558,7 +550,7 @@ Alarming:
 				-->
 				<section data-markdown>
 					<script type="text/template">
-### Histogram / Summary:
+### H<span style="text-transform: lowercase;">istogram</span> / S<span style="text-transform: lowercase;">ummary</span>:
 
 - Latency of services
 - Request or Request size
@@ -586,15 +578,14 @@ Metric + PromQL:
 
 				<section data-markdown>
 					<script type="text/template">
-### Metric and Label Naming
+### M<span style="text-transform: lowercase;">etric and Label Naming</span>
 
-Best practises on <a target="_blank" href="https://prometheus.io/docs/practices/naming/">metric names</a>:
+Best practices on <a target="_blank" href="https://prometheus.io/docs/practices/naming/">metric names</a>:
 
 - service name is your prefix `user_`
 - state the bae unit `_seconds` and `_bytes`
 					</script>
 				</section>
-
 
 				<!-- section data-markdown>
 					<script type="text/template">
@@ -608,7 +599,7 @@ Best practises on <a target="_blank" href="https://prometheus.io/docs/practices/
 				</section -->
 
 				<section>
-					<h3>Prometheus + Golang</h3>
+					<h3>P<span style="text-transform: lowercase;">rometheus</span> + G<span style="text-transform: lowercase;">olang</span></h3>
 						<img src="img/logo_prometheus.png" width="30%" />
 						<img src="img/logo_grafana.png" width="20%" />
 						<img src="img/logo_go.png" width="30%" />
@@ -617,7 +608,7 @@ Best practises on <a target="_blank" href="https://prometheus.io/docs/practices/
 
 				<section data-markdown>
 					<script type="text/template">
-### Goalng client
+### G<span style="text-transform: lowercase;">olang client</span>
 
 - <a target="_blank" href="https://github.com/prometheus/client_golang">github.com/prometheus/client_golang</a>
 					</script>
@@ -625,7 +616,7 @@ Best practises on <a target="_blank" href="https://prometheus.io/docs/practices/
 
 				<section data-markdown>
 					<script type="text/template">
-#### Demo: Simple REST service
+#### D<span style="text-transform: lowercase;">emo:</span> S<span style="text-transform: lowercase;">imple</span> REST <span style="text-transform: lowercase;">service</span>
 
 <pre><code>
      -----------         ---------------
@@ -639,16 +630,15 @@ Best practises on <a target="_blank" href="https://prometheus.io/docs/practices/
 					</script>
 				</section>
 
-				<section data-markdown>
-					<script type="text/template">
-					#### Demo:
-
-- <a target="_blank" href="http://127.0.0.1:8080/hello">http://127.0.0.1:8080/hello</a> - service
-- <a target="_blank" href="http://127.0.0.1:8080/metrics">http://127.0.0.1:8080/metrics</a>
-- <a target="_blank" href="http://127.0.0.1:9090">http://127.0.0.1:9090</a> - prometheus
-- <a target="_blank" href="http://127.0.0.1:3000">http://127.0.0.1:3000</a> - grafana (admin:secret)
-- <a target="_blank" href="http://127.0.0.1:9093">http://127.0.0.1:9093</a> - alertmanager
-					</script>
+				<section>
+					<h4>Demo</h4>
+					<ul>
+						<li><a target="_blank" href="http://127.0.0.1:8080/hello">http://127.0.0.1:8080/hello</a> - service</li>
+						<li><a target="_blank" href="http://127.0.0.1:8080/metrics">http://127.0.0.1:8080/metrics</a></li>
+						<li><a target="_blank" href="http://127.0.0.1:9090">http://127.0.0.1:9090</a> - prometheus</li>
+						<li><a target="_blank" href="http://127.0.0.1:3000">http://127.0.0.1:3000</a> - grafana (admin:secret)</li>
+						<li><a target="_blank" href="http://127.0.0.1:9093">http://127.0.0.1:9093</a> - alertmanager</li>
+					</ul>
 				</section>
 
 
@@ -660,10 +650,10 @@ Best practises on <a target="_blank" href="https://prometheus.io/docs/practices/
 
 ☁  demo ⚡ docker ps
 CONTAINER ID        IMAGE                      PORTS                    NAMES
-5f824d1bc789        grafana/grafana:5.2.2      0.0.0.0:3000->3000/tcp   talk-go-prom-red_grafana_1
-d681a414a8b6        prom/prometheus:v2.1.0     0.0.0.0:9090->9090/tcp   talk-go-prom-red_prometheus_1
-ea0d9233e159        prom/alertmanager:v0.15.1  0.0.0.0:9093->9093/tcp   talk-go-prom-red_alertmanager_1
-732c59fb3753        java-prom_order-manager    0.0.0.0:8080->8080/tcp   talk-go-red_order-manager_1</code></pre>
+5f824d1bc789        grafana/grafana:10.0.0     0.0.0.0:3000->3000/tcp   talk-go-prom-red_grafana_1
+d681a414a8b6        prom/prometheus:v2.44.0     0.0.0.0:9090->9090/tcp   talk-go-prom-red_prometheus_1
+ea0d9233e159        prom/alertmanager:v0.25.0  0.0.0.0:9093->9093/tcp   talk-go-prom-red_alertmanager_1
+732c59fb3753        order-manager    0.0.0.0:8080->8080/tcp   talk-go-red_order-manager_1</code></pre>
 					</script>
 				</section>
 
@@ -682,22 +672,22 @@ ea0d9233e159        prom/alertmanager:v0.15.1  0.0.0.0:9093->9093/tcp   talk-go-
 </section>
 
 				<section>
-					<h5>Grafana</h5>
+					<h5 style="text-transform: none !important;">Grafana</h5>
 					<img src="img/kubernetes-grafana-live-demo.png" width="90%"  />
 				</section>
 
 				<section>
-					<h5>Prometheus </h5>
+					<h5 style="text-transform: none !important;">Prometheus</h5>
 					<img src="img/demo/prometheus_1.png" width="90%"  />
 				</section>
 
 				<section>
-					<h5>Prometheus </h5>
+					<h5 style="text-transform: none !important;">Prometheus</h5>
 					<img src="img/demo/prometheus_2.png" width="90%"  />
 				</section>
 
 				<section>
-					<h5>Prometheus </h5>
+					<h5 style="text-transform: none !important;">Prometheus</h5>
 					<img src="img/demo/prometheus_3_alerts.png" width="90%"  />
 				</section>
 
@@ -711,32 +701,32 @@ ea0d9233e159        prom/alertmanager:v0.15.1  0.0.0.0:9093->9093/tcp   talk-go-
 				</section>
 
 				<section>
-					<h5>Prometheus</h5>
+					<h5>P<span style="text-transform: lowercase;">rometheus</span></h5>
 					<img src="img/demo/prometheus_4_alerts.png" width="90%"  />
 				</section>
 
 				<section>
-					<h5>Prometheus</h5>
+					<h5>P<span style="text-transform: lowercase;">rometheus</span></h5>
 					<img src="img/demo/prometheus_5_alerts.png" width="90%"  />
 				</section>
 
 				<section>
-					<h5>Alertmanager</h5>
+					<h5>A<span style="text-transform: lowercase;">lertmanager</span></h5>
 					<img src="img/demo/alertmanager_1.png"  width="90%"  />
 				</section>
 
 				<section>
-					<h5>Grafana</h5>
+					<h5>G<span style="text-transform: lowercase;">rafana</span></h5>
 					<img src="img/demo/grafana_1.png"  width="90%"  />
 				</section>
 
 				<section>
-					<h5>Grafana</h5>
+					<h5>G<span style="text-transform: lowercase;">rafana</span></h5>
 					<img src="img/demo/grafana_2.png"  width="90%"  />
 				</section>
 
 				<section>
-					<h5>Github</h5>
+					<h5>G<span style="text-transform: lowercase;">ithub</span></h5>
 					<img src="img/demo/github.png"  width="80%"  />
 				</section>
 
@@ -782,7 +772,7 @@ make srv_wrk_random</code></pre>
 
 				<section data-markdown>
 					<script type="text/template">
-### Demo
+### D<span style="text-transform: lowercase;">emo</span>
 
 Everything Included:
 - Prometheus dashboard and config
@@ -811,17 +801,8 @@ order_mgmt_audit_duration_seconds_sum{job=~".*"}</code></pre>
 				</script>
 			</section -->
 
-				<!-- section data-markdown>
-					<script type="text/template">
-					### Next steps
-
-					- Extend the sample application with OpenZipkin
-					- In daily work, evaluating new: <a>linkerd.io</a>, <a>istio.io</a>, ...
-					</script>
-				</section -->
-
 				<section>
-					<h3>Best practises</h3>
+					<h3>Best practices</h3>
 					<ul>
 						<li>Start simple (up/down), later add more complex rules</li>
 						<li>Sum over Summaries with Q leads to incorrect results, see <a target="_blank" href="https://prometheus.io/docs/practices/histograms/">prom docs</a></li>
@@ -837,15 +818,15 @@ order_mgmt_audit_duration_seconds_sum{job=~".*"}</code></pre>
 					</ul>
 				</section>
 
-			<section data-background="img/smacc_header_IT_source.jpg" data-background-repeat="" data-background-size="100%" data-background-position="bottom" style="position: relative; top:0">
-				<h1>Thank you</h1>
+			<section data-background="" data-background-repeat="" data-background-size="30%" data-background-position="bottom" style="position: relative; top:0">
+				<h1>Q<span style="text-transform: lowercase;">uestions?</span></h1>
 			</section>
 
 			<!--
 				BACKUP SLIDES
 			-->
-			<section data-background="img/smacc_header_IT_source.jpg" data-background-repeat="" data-background-size="100%" data-background-position="bottom" style="position: relative; top:0">
-				<h1>Backup Slides</h1>
+			<section data-background="" data-background-repeat="" data-background-size="30%" data-background-position="bottom" style="position: relative; top:0">
+				<h1>B<span style="text-transform: lowercase;">ackup Slides</span></h1>
 			</section>
 
 				<section data-markdown>
@@ -883,7 +864,7 @@ Which one is better?
 				</section>
 
 			<section>
-				<h2>Prometheus + K8S = &lt;3</h2>
+				<h3>Prometheus + K8S = &lt;3</h3>
 				<h5>Labels are propagated from k8s to prometheus</h5>
 			</section>
 
@@ -916,20 +897,25 @@ Which one is better?
 		</div>
 		</div>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/zoom/zoom.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/search/search.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
 
 		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
+
+			// Also available as an ES module, see:
+			// https://revealjs.com/initialization/
 			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
+				controls: true,
+				progress: true,
+				center: true,
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
 			});
 		</script>
 	</body>

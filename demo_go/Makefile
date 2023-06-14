@@ -38,7 +38,3 @@ srv_wrk_random:
 
 ensure_formatting:
 	goimports -w *.go && goimports -w */*.go
-
-utils_ln_gopath:
-	mkdir -p $$GOPATH/src/github.com/wojciech12; \
-	ln -s $$(pwd) $$GOPATH/src/github.com/wojciech12/$(SERVICE_NAME)

@@ -1,5 +1,6 @@
 */prometheus/data/
 */grafana/data/
+*/alertmanager/data/
 
 # go
 demo_go/.idea/*
@@ -23,3 +24,6 @@ demo_java/bin
 demo_py/grafana/data/
 demo_py/multiproc-tmp/
 demo_py/alertmanager/data/
+
+#misc
+*/core
