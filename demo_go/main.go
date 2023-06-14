@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net/http"
 
 	"strconv"
@@ -8,33 +9,40 @@ import (
 
 	"errors"
 
-	. "github.com/wojciech12/order-manager/middleware"
-	. "github.com/wojciech12/order-manager/service"
+	"github.com/wojciech12/talk_monitoring_with_prometheus/middleware"
+	"github.com/wojciech12/talk_monitoring_with_prometheus/service"
 )
 
 func main() {
-	s := NewService("order-mgmt", "0.0.0.0:8080")
-	m := NewMetricCollector(s.Name)
+	s := service.New("order-mgmt", "0.0.0.0:8080")
+	m := middleware.NewMetricCollector(s.Name)
 	s.MetricCollector = m
 	s.SetupBasicRoutes()
-	s.HandleFunc("/hello", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Write([]byte("hello!"))
-	})
-	s.HandleFunc("/world", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Write([]byte("World!"))
-	})
 
 	app := App{m}
-	s.HandleFunc("/complex", app.handleComplex)
+
+	s.Router.Get("/hello", app.helloHandler)
+	s.Router.Get("/world", app.worldHandler)
+	s.Router.Get("/complex", app.complexHandler)
+
 	s.Start()
 }
 
 type App struct {
-	m MetricCollector
+	m service.MetricCollector
 }
 
-func (app *App) handleComplex(writer http.ResponseWriter, request *http.Request) {
+func (app *App) helloHandler(writer http.ResponseWriter, request *http.Request) {
+	writer.Write([]byte("hello!"))
+}
+
+func (app *App) worldHandler(writer http.ResponseWriter, request *http.Request) {
+	writer.Write([]byte("world!"))
+}
+
+func (app *App) complexHandler(writer http.ResponseWriter, request *http.Request) {
 	vars := request.URL.Query()
+	ctx := request.Context()
 	sleepDb := float64(0)
 	sleepAudit := float64(0)
 
@@ -61,9 +69,9 @@ func (app *App) handleComplex(writer http.ResponseWriter, request *http.Request)
 		doAuditError, _ = strconv.ParseBool(v[0])
 	}
 
-	err := app.callDatabase(sleepDb, doDbError)
+	err := app.callDatabase(ctx, sleepDb, doDbError)
 	if err == nil {
-		err = app.callAudit(sleepAudit, doAuditError)
+		err = app.callAudit(ctx, sleepAudit, doAuditError)
 		if err == nil {
 			writer.WriteHeader(http.StatusOK)
 			writer.Write([]byte("Success!"))
@@ -74,7 +82,7 @@ func (app *App) handleComplex(writer http.ResponseWriter, request *http.Request)
 	writer.WriteHeader(http.StatusServiceUnavailable)
 }
 
-func (app *App) callDatabase(sleepDuration float64, doError bool) error {
+func (app *App) callDatabase(_ context.Context, sleepDuration float64, doError bool) error {
 	// do sth with db
 	if doError {
 		app.m.ObserveDatabase("SQL_1", 1001, "HY000", 0.01)
@@ -91,7 +99,7 @@ func (app *App) callDatabase(sleepDuration float64, doError bool) error {
 	return nil
 }
 
-func (app *App) callAudit(sleepDuration float64, doError bool) error {
+func (app *App) callAudit(_ context.Context, sleepDuration float64, doError bool) error {
 	// do sth with db
 	if doError {
 		app.m.ObserveAudit("POST", "/audit", 500, 0)

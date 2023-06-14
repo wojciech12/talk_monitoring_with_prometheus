@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/wojciech12/order-manager/service"
+	"github.com/wojciech12/talk_monitoring_with_prometheus/service"
 )
 
 // might go to package middleware

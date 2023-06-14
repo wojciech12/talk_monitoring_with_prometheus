@@ -7,7 +7,8 @@ import (
 	"os/signal"
 	"runtime"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -22,23 +23,24 @@ type Service struct {
 	Host            string
 	Port            int
 	MetricCollector MetricCollector
-	Router          *mux.Router
+	Router          *chi.Mux
 	Stop            chan os.Signal
 }
 
-func NewService(name string, host string) *Service {
+func New(name string, host string) *Service {
 	s := Service{}
 	s.Name = name
 	s.Host = host
-	s.Router = mux.NewRouter()
+	s.Router = chi.NewRouter()
 	return &s
 }
 
 // add the standard handlers
 // we have omitted, e.g., /health and /info
 func (s *Service) SetupBasicRoutes() {
-	s.Router.Handle("/metrics", promhttp.Handler()).Methods("GET")
-	http.Handle("/", s.Router)
+	ph := promhttp.Handler()
+	s.Router.Use(s.requestTimerMiddleware)
+	s.Router.Get("/metrics", ph.ServeHTTP)
 }
 
 func (s *Service) Start() {
@@ -58,17 +60,16 @@ func (s *Service) Start() {
 	log.Print("Service shutting down...")
 }
 
-// handle func wrapper with token validation, logging recovery and metrics
-func (s *Service) HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request)) *mux.Route {
-	h := func(originalResponseWriter http.ResponseWriter, r *http.Request) {
+// HTTP middleware setting a value on the request context
+func (s *Service) requestTimerMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(orgWriter http.ResponseWriter, r *http.Request) {
 		timer := NewTimer()
-		// use our response writer
-		w := &ResponseWriter{ResponseWriter: originalResponseWriter, status: 200}
-		defer s.finalizeRequest(w, r, timer)
-		// call custom handler
-		handler(w, r)
-	}
-	return s.Router.HandleFunc(pattern, h)
+		w := &ResponseWriter{ResponseWriter: orgWriter, status: 200}
+		defer func() {
+			s.finalizeRequest(w, r, timer)
+		}()
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (s Service) finalizeRequest(w *ResponseWriter, r *http.Request, timer *Timer) {
