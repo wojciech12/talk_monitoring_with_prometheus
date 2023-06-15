@@ -26,6 +26,15 @@
 			h3,h4,h5 {
 				text-transform: none !important;
 			}
+
+			img {
+				border:0;
+			}
+
+			pre {
+		   	 border: none;
+			    box-shadow: none;
+			}
 		</style>
 	</head>
 	<body>
@@ -116,7 +125,7 @@
 						<li>Like a debugging vs testing</li>
 						<li>Post-mortem</li>
 						<li>Hard to find the needle</li>
-						<li>Hight CTO</li>
+						<li>High TCO</li>
 					</ul>
 				</section>
 
@@ -351,19 +360,39 @@ Not recommended for:
 ### P<span style="text-transform: lowercase;">rometheus</span>
 
 - Plain text,
-- Metrics collected over HTTP <a href="http://127.0.0.1:8080/prometheus">metrics/</a>,
+- Metrics collected over HTTP <a href="http://127.0.0.1:8080/metrics">metrics/</a>,
 - Pull model [1],
-- Wide support for languages,
 - PromQL,
-- Integration with Kubernetes, Traefik, ...
+- SDKs, Exporters and support in the most of CloudNative-projects
+- alertManager
 
 <small>[1] See *scrape time*, push-mode possible</small></p>
 					</script>
 				</section>
 
 				<section data-markdown>
+					<script type="text/template">
+#### <span style="text-transform: lowercase;">go gc metrics</span>
+
+Endpoint <a href="http://127.0.0.1:8080/metrics">metrics/</a>*:
+
+<pre><code data-trim="" width="100%"># HELP go_gc_duration_seconds A summary of the GC invocation durations.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 9.01e-05
+go_gc_duration_seconds{quantile="0.25"} 0.000141101
+go_gc_duration_seconds{quantile="0.5"} 0.000178902
+go_gc_duration_seconds{quantile="0.75"} 0.000226903
+go_gc_duration_seconds{quantile="1"} 0.006099658
+go_gc_duration_seconds_sum 18.749046756
+go_gc_duration_seconds_count 89273</code></pre>
+
+<p><small>Sometimes on a dedicated port, e.g., 9090</small></p>
+				</script>
+			</section>
+
+				<section data-markdown>
 					<script type="text/template" width="100%">
-### M<span style="text-transform: lowercase;">etrics in plain text</span>
+#### S<span style="text-transform: lowercase;">ervice metrics</span>
 
 <pre><code data-trim="" width="100%"># HELP order_mgmt_audit_duration_seconds Multiprocess metric
 # TYPE order_mgmt_audit_duration_seconds summary
@@ -384,88 +413,167 @@ order_mgmt_duration_seconds_sum{method="GET",path="/complex",status_code="503"} 
 
 				<section data-markdown>
 					<script type="text/template">
-### M<span style="text-transform: lowercase;">etrics in plain text</span>
+### E<span style="text-transform: lowercase;">xporters and </span>SDKs
 
-<pre><code data-trim="" width="100%"># HELP go_gc_duration_seconds A summary of the GC invocation durations.
-# TYPE go_gc_duration_seconds summary
-go_gc_duration_seconds{quantile="0"} 9.01e-05
-go_gc_duration_seconds{quantile="0.25"} 0.000141101
-go_gc_duration_seconds{quantile="0.5"} 0.000178902
-go_gc_duration_seconds{quantile="0.75"} 0.000226903
-go_gc_duration_seconds{quantile="1"} 0.006099658
-go_gc_duration_seconds_sum 18.749046756
-go_gc_duration_seconds_count 89273</code></pre>
-				</script>
-			</section>
-
-				<section data-markdown>
-					<script type="text/template">
-### E<span style="text-transform: lowercase;">xporters</span>
-
-- Mongodb
-- Mysql
 - Postgresql
+- Mysql
 - Rabbitmq
 - ...
-- also Blackbox exporter
+- Blackbox exporter
+- SDKs: go, ..., Java
 
 <p><small><a href="https://prometheus.io/docs/instrumenting/exporters/">Exporters and integrations</a></small></p>
 				</script>
 			</section>
 
+			<section>
+					<h3>C<span style="text-transform: lowercase;">loud-native projects integration</span></h3>
+					<img src="img/traefik_architecture.svg" width="80%"/>
+					<small><a href="https://traefik.io/">traefik</a>: <code>--web.metrics.prometheus</code></small>
+			</section>
+
 				<section data-markdown>
+					<script type="text/template" width="100%">
+### P<span style="text-transform: lowercase;">rometheus</span>
+
+Scraping configuration (pull model):
+
+```toml
+global:
+  scrape_interval: 2s
+  scrape_timeout: 2s
+  evaluation_interval: 2s
+  external_labels:
+    environment: production
+```
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template" width="100%">
+### P<span style="text-transform: lowercase;">rometheus</span>
+
+Scraping configuration:
+
+scrape interval to 2x the amount of time it takes for your application to generate new metric.
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+### P<span style="text-transform: lowercase;">rom</span>QL
+
+```promql
+irate(order_mgmt_duration_seconds_bucket[2m])
+
+sum(irate(order_mgmt_duration_seconds_count{job=~".*"}[1m])) 
+    by (status_code)
+
+redict_linear()
+holt_winters()
+```
+<p><small>more during the demo</small></p>
+					</script>
+					<!-- https://prometheus.io/docs/prometheus/latest/querying/functions/#holt_winters() -->
+				</section>
+
+
+<!-- 				<section data-markdown>
 					<script type="text/template">
 ### P<span style="text-transform: lowercase;">rometheus</span> P<span style="text-transform: lowercase;">rom</span>QL
 
 <p>Working with histograms:</p>
-
-  ```promql
-  histogram_quantile(0.9,
-    rate(http_req_duration_seconds_bucket[10m]))
-  ```
 
 <p>Rates:</p>
 
   ```promql
   rate(http_requests_total{job="api-server"}[5m])
     irate(http_requests_total{job="api-server"}[5m])
+
+   sum(irate(order_mgmt_duration_seconds_count{job=~".*"}[1m])) by (status_code)
   ```
 
 More complex - `redict_linear` and `holt_winters`.
 					</script>
-					<!-- https://prometheus.io/docs/prometheus/latest/querying/functions/#holt_winters() -->
+				</section> -->
+				<section data-markdown>
+					<script type="text/template">
+### Recording Rules
+
+For frequently needed and expensive expressions:
+
+```yaml
+groups:
+  - name: example
+    rules:
+    - record: code:prometheus_http_requests_total:sum
+      expr: sum by (code) (prometheus_http_requests_total)
+```
+
+<p><small><a href="https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/#recording-rules">docs</a></small></p>
+					</script>
+				</section>
+
+
+				<section data-markdown>
+					<script type="text/template">
+### Alerting rules
+
+<pre><code>
+- alert: ProductionInstanceDown
+    expr: up{env = 'production'}  == 0
+    for: 1m
+    labels:
+      severity: opsgenie
+    annotations:
+      summary: "Instance {{ $labels.instance }} of {{ $labels.app }} is down"
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes."
+   }</code></pre>
+					</script>
 				</section>
 
 				<section data-markdown>
 					<script type="text/template">
-### P<span style="text-transform: lowercase;">rometheus</span> P<span style="text-transform: lowercase;">rom</span>QL
+### Alerting rules
 
-Alarming:
+Understanding delays on alerting ([src](https://pracucci.com/prometheus-understanding-the-delays-on-alerting.html))
 
-<pre><code>ALERT ProductionAppServiceInstanceDown
-   IF up { environment = "production", app =~ ".+"} == 0
-   FOR 4m
-   ANNOTATIONS {
-        summary = "Instance of {{$labels.app}} is down",
-        description = " Instance  {{$labels.instance}} of app {{$labels.app}} has been down for more than 4 minutes"
-   }</code></pre>
-
+![](https://pracucci.com/assets/2016-11-16-prometheus-alert-lifecycle-612f4a8f0171d3e56c2cc2ed4bcfb90232bfbdd2d1273d11d97f52a0e3cd121d.png)
 					</script>
-					<!-- "https://pracucci.com/prometheus-understanding-the-delays-on-alerting.html -->
-					<!-- https://prometheus.io/docs/prometheus/latest/querying/functions/#holt_winters() -->
 				</section>
 
-				<section>
-					<h3>C<span style="text-transform: lowercase;">loud-native projects integration</span></h3>
-					<img src="img/traefik_architecture.svg" width="80%"/>
-					<small><a href="https://traefik.io/">traefik</a>: <code>--web.metrics.prometheus</code></small>
+				<section data-markdown>
+					<script type="text/template">
+### Alertmanager - dispatcher
+
+```yaml
+route:
+  group_by: ['environment']
+  receiver: email-general
+  routes:
+  - match:
+      environment: production
+      severity: opsgenie
+    receiver: opsgenie-general
+  - match_re:
+      severity: email
+    receiver: email-general
+```
+					</script>
+				</section>
+
+
+				<section data-markdown>
+					<script type="text/template">
+## M<span style="text-transform: lowercase;">etric types</span>
+					</script>
 				</section>
 
 				<!--
 				-->
 				<section data-markdown>
 					<script type="text/template">
-### M<span style="text-transform: lowercase;">etrics</span>
+### Metric types
 
 - Counter - just up
 - Gauge - up/down
@@ -477,29 +585,25 @@ Alarming:
 				<section>
 <h4>H<span style="text-transform: lowercase;">istogram</span></h4>
 
-<code>traefik_duration_seconds_bucket<br />{method="GET,code="200"}</code>
+<small><code>http_request_duration_seconds{status_code="200"}</code></small>
 
 <table class="table">
 <tbody>
 	<tr>
 		 <td>{le="0.1"}</td>
-		 <td>2229</td>
+		 <td>2</td>
 	</tr>
 	<tr>
 		 <td>{le="0.3"}</td>
-		 <td>107</td>
+		 <td>4</td>
 	</tr>
 	<tr>
 		 <td>{le="1.2"}</td>
 		 <td>100</td>
 	</tr>
 	<tr>
-		 <td>{le="5"}</td>
-		 <td>4</td>
-	</tr>
-	<tr>
 		 <td>{le="+Inf"}</td>
-		 <td>2</td>
+		 <td>2229</td>
 	</tr>
 	<tr>
 		<td>_sum</td>
@@ -507,46 +611,65 @@ Alarming:
 	</tr>
 	<tr>
 		<td>_count</td>
-		<td>2342</td>
+		<td>2229</td>
 	</tr>
 </tbody>
 </table>
+
+<p><small>le = lower or equal (<a href="https://prometheus.io/docs/tutorials/understanding_metric_types/#histogram">tutorial</a>)</small></p>
 				</section>
 
-				<!-- A Summary similar to histogram_quantile() -->
+				<section data-markdown>
+					<script type="text/template">
+### Histogram
+
+To quantitle:
+
+```promql
+histogram_quantile(
+    0.9,order_mgmt_audit_duration_seconds_bucket)
+```
+					</script>
+				</section>
+
 				<section>
+<h3>S<span style="text-transform: lowercase;">ummary</span></h3>
 
+- Cheaper but lose more data,
+- Computed at the client,
+- example, <code>go_gc_duration_seconds</code>.
+				</section>
+				<!-- https://povilasv.me/prometheus-tracking-request-duration/ -->
+
+				<section>
 <h4>S<span style="text-transform: lowercase;">ummary</span></h4>
-
 <code>http_request_duration_seconds</code>
 
 <table class="table">
-						 <tbody>
-							<tr>
-								 <td>{quantile="0.5"}</td>
-								 <td>4</td>
-							</tr>
-							<tr>
-								 <td>{quantile="0.9"}</td>
-								 <td>5</td>
-							</tr>
-							<tr>
-								 <td>http_request_duration_seconds_sum</td>
-								 <td>9</td>
-							</tr>
-							<tr>
-								 <td>http_request_duration_seconds_count</td>
-								 <td>3</td>
-							</tr>
-						 </tbody>
+	<tbody>
+		<tr>
+			<td>{quantile="0.5"}</td>
+			<td>4 (seconds)</td>
+		</tr>
+		<tr>
+			<td>{quantile="0.9"}</td>
+			<td>5</td>	
+		</tr>
+		<tr>
+			<td>_sum</td>
+			<td>9</td>
+		</tr>
+		<tr>
+			<td>_count</td>
+			<td>3</td>
+		</tr>
+	</tbody>
 </table>
 				</section>
 
 				<!--
 				https://godoc.org/github.com/prometheus/client_golang/prometheus#Histogram
-				https://godoc.org/github.com/prometheus/client_golang/prometheus#Summary
-				https://github.com/prometheus/client_java/blob/master/simpleclient/src/main/java/io/prometheus/client/Summary.java#L61-L63
-				https://povilasv.me/prometheus-tracking-request-duration/
+				https://godoc.org/github.com/prometheus/client_golang/prometheus#Summary	
 				-->
 				<section data-markdown>
 					<script type="text/template">
@@ -555,7 +678,7 @@ Alarming:
 - Latency of services
 - Request or Request size
 
-Histograms recommended
+Histograms recommended ([docs](https://prometheus.io/docs/practices/histograms/))
 					</script>
 				</section>
 
@@ -569,10 +692,10 @@ Histograms recommended
 					<script type="text/template">
 ### RED
 
-Metric + PromQL:
+Histogram + PromQL:
 
-	sum(irate(order_mgmt_duration_seconds_count
-	{job=~".*"}[1m])) by (status_code)
+<pre>sum(irate(order_mgmt_duration_seconds_count
+	{job=~".*"}[1m])) by (status_code)</pre>
 					</script>
 				</section>
 
@@ -582,21 +705,11 @@ Metric + PromQL:
 
 Best practices on <a target="_blank" href="https://prometheus.io/docs/practices/naming/">metric names</a>:
 
-- service name is your prefix `user_`
-- state the bae unit `_seconds` and `_bytes`
+- service name is your prefix `user_`,
+- state the base unit `_seconds` and `_bytes`,
+- notice - **http**_request_duration_seconds.
 					</script>
 				</section>
-
-				<!-- section data-markdown>
-					<script type="text/template">
-					### Metrics
-
-					Histogram / Summary:
-					- sum <code>_sum</code>
-					- count <code>_count</code>
-					- count / sum per bucket
-					</script>
-				</section -->
 
 				<section>
 					<h3>P<span style="text-transform: lowercase;">rometheus</span> + G<span style="text-transform: lowercase;">olang</span></h3>
@@ -726,26 +839,33 @@ ea0d9233e159        prom/alertmanager:v0.25.0  0.0.0.0:9093->9093/tcp   talk-go-
 				</section>
 
 				<section>
-					<h5>G<span style="text-transform: lowercase;">ithub</span></h5>
-					<img src="img/demo/github.png"  width="80%"  />
+					<h3>PromQL</h3>
+<pre><code>order_mgmt_duration_seconds_sum{status_code='200'}</code></pre>
 				</section>
 
-				<!-- section data-markdown>
-					<script type="text/template">
-### Demo: Java Code
+				<section>
+					<h3>PromQL</h3>
+<pre><code>order_mgmt_duration_seconds_sum{status_code='200'}</code></pre>
+				</section>
 
-- Metric Definition
-					</script>
-				</section -->
 
-				<!-- section data-markdown>
-					<script type="text/template">
-					#### Demo: Simulating Calls
+				<section>
+					<h3>PromQL</h3>
+<pre><code>sum(irate(order_mgmt_duration_seconds_count{job=~".*"}[1m])) 
+    by (status_code)</code></pre>
 
-<pre><code class="bash" data-trim="" width="100%">make docker_build
-make docker_run</code></pre>
-					</script>
-				</section -->
+<p><small>Explanation: irate (<a href="https://techannotation.wordpress.com/2021/07/19/irate-vs-rate-whatre-they-telling-you/">vs rate</a>), [1m], sum.</small></p>
+				</section>
+
+				<section>
+					<h3>PromQL</h3>
+<pre><code>sum(irate(order_mgmt_duration_seconds_sum[1m]))</code></pre>
+
+<pre><code>sum(irate(order_mgmt_database_duration_seconds_sum[1m]))</code></pre>
+
+<pre><code>sum(irate(order_mgmt_audit_duration_seconds_sum[1m]))</code></pre>
+				</section>
+
 
 				<!-- section data-markdown>
 					<script type="text/template">
@@ -770,27 +890,6 @@ make srv_wrk_random</code></pre>
 					</script>
 				</section -->
 
-				<section data-markdown>
-					<script type="text/template">
-### D<span style="text-transform: lowercase;">emo</span>
-
-Everything Included:
-- Prometheus dashboard and config
-- AlertManager dashboard and config
-- Simulate the successful and failed calls
-- Examples of queries for rate
-					</script>
-				</section>
-
-				<!-- section data-markdown>
-					<script type="text/template">
-					### P<span style="text-transform: lowercase;">rom</span>QL
-<pre><code class="yaml" data-trim="" width="100%">
-sum(irate(order_mgmt_duration_seconds_count{job=~".*"}[1m]))
-   by (status_code)</pre></code>
-				</script>
-			</section -->
-
 				<!-- section data-markdown>
 					<script type="text/template">
 					### P<span style="text-transform: lowercase;">rom</span>QL
@@ -804,8 +903,8 @@ order_mgmt_audit_duration_seconds_sum{job=~".*"}</code></pre>
 				<section>
 					<h3>Best practices</h3>
 					<ul>
-						<li>Start simple (up/down), later add more complex rules</li>
-						<li>Sum over Summaries with Q leads to incorrect results, see <a target="_blank" href="https://prometheus.io/docs/practices/histograms/">prom docs</a></li>
+						<li>Start simple (up/down), later more complex rules</li>
+						<li>If in doubt, use histogram (<a target="_blank" href="https://prometheus.io/docs/practices/histograms/">docs</a>)</li>
 					</ul>
 				</section>
 
@@ -814,9 +913,43 @@ order_mgmt_audit_duration_seconds_sum{job=~".*"}</code></pre>
 					<ul>
 						<li>Monitoring saves your time</li>
 						<li>Checking logs == debuging vs having tests</li>
-						<li>Logging -&gt; high TCO</li>
+						<li>One of the lines of defence</li>
 					</ul>
 				</section>
+
+				<section>
+					<h3>Summary</h3>
+
+					One of the lines of defence:
+					<ul>
+						<li>Retrospectives,</li>
+						<li>Regular performance reviews by product/dev teams,</li>
+						<li>Syntetic tests, end2end, ...</li>
+						<li>Alerts from the user perspective (see <a target="_blank" href="https://prometheus.io/docs/practices/alerting/">docs</a>)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h4>Github</h4>
+					<img src="img/demo/github.png"  width="80%"  />
+
+					<p><small>
+<a target="_blank" href="https://github.com/wojciech12/talk_monitoring_with_prometheus">github.com/wojciech12/talk_monitoring_with_prometheus</a></small></p>
+				</section>
+
+
+				<section data-markdown>
+					<script type="text/template">
+#### D<span style="text-transform: lowercase;">emo</span>
+
+Everything Included:
+- Prometheus dashboard and config
+- AlertManager dashboard and config
+- Simulate the successful and failed calls
+- Examples of queries for rate
+					</script>
+				</section>
+
 
 			<section data-background="" data-background-repeat="" data-background-size="30%" data-background-position="bottom" style="position: relative; top:0">
 				<h1>Q<span style="text-transform: lowercase;">uestions?</span></h1>

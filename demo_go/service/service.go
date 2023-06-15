@@ -80,9 +80,9 @@ func (s Service) finalizeRequest(w *ResponseWriter, r *http.Request, timer *Time
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		//log.Info("%s \"%s %s %s\" %d", r.RemoteAddr, r.Method, r.URL, r.Proto, w.status)
 	}
-	s.MetricCollector.ObserveMyself(r.Method, r.URL.Path, w.status, timer.durationSeconds())
+	s.MetricCollector.ObserveMyself(r.URL.Path, r.Method, w.status, timer.durationSeconds())
 	// access log
-	log.Printf("%s \"%s %s %s\" %d - %s", r.RemoteAddr, r.Method, r.URL, r.Proto, w.status, r.UserAgent())
+	log.Printf("%s \"%s %s %s\" %d - %s", r.RemoteAddr, r.URL, r.Method, r.Proto, w.status, r.UserAgent())
 }
 
 type ResponseWriter struct {
