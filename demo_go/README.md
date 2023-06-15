@@ -94,6 +94,13 @@ Docker-compose mounts all configuration from the git repo. You can change it loc
     ```promql
     histogram_quantile(0.99, sum(rate(order_mgmt_duration_seconds_count{job=~".*",ws="false"}[5m])) by (le))
     ```
+  
+  - [apdex](https://prometheus.io/docs/practices/histograms/):
+
+    ```promql
+    (
+  sum(rate(http_request_duration_seconds_bucket{le="0.3"}[5m])) by (job) + sum(rate(http_request_duration_seconds_bucket{le="1.2"}[5m])) by (job)) / 2 / sum(rate(http_request_duration_seconds_count[5m])) by (job)
+    ```
 
 ### Related Work
 
